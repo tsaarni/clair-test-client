@@ -66,8 +66,9 @@ func main() {
 	// build request for clair to scan the filesystem layers in the image
 	layers := make([]*clairpb.PostAncestryRequest_PostLayer, len(manifest.FSLayers))
 	for i, l := range manifest.FSLayers {
-		layers[i] = &clairpb.PostAncestryRequest_PostLayer{
-			Hash:    l.BlobSum.Encoded(),
+		// reverse order for v1 schema
+		layers[len(manifest.FSLayers)-1-i] = &clairpb.PostAncestryRequest_PostLayer{
+			Hash:    l.BlobSum.String(),
 			Path:    strings.Join([]string{url, "v2", repository, "blobs", l.BlobSum.Encoded()}, "/"),
 			Headers: map[string]string{"Authorization": token},
 		}
